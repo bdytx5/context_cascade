@@ -32,3 +32,6 @@
 *.pdf
 . -type f -name *.json ! -path ./.git/* -exec du -h {} + | sort -h.json
 *.safetensors
+./C3-Context-Cascade-Compression/dataset/arxiv_ai_papers.json
+./C3-Context-Cascade-Compression/dataset/arxiv_summaries.json
+output_dir/
