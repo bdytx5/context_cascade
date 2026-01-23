@@ -1,0 +1,7 @@
+{"time":"2026-01-22T09:48:00.545051461Z","level":"INFO","msg":"stream: starting","core version":"0.20.0","symlink path":"/home/cloud/c3/C3-Context-Cascade-Compression/C3-master/C3/train/wandb/run-20260122_094800-gl8eoijs/logs/debug-core.log"}
+{"time":"2026-01-22T09:48:00.988898866Z","level":"INFO","msg":"stream: created new stream","id":"gl8eoijs"}
+{"time":"2026-01-22T09:48:00.988931526Z","level":"INFO","msg":"stream: started","id":"gl8eoijs"}
+{"time":"2026-01-22T09:48:00.988950406Z","level":"INFO","msg":"writer: Do: started","stream_id":"gl8eoijs"}
+{"time":"2026-01-22T09:48:00.989003442Z","level":"INFO","msg":"handler: started","stream_id":"gl8eoijs"}
+{"time":"2026-01-22T09:48:00.98895635Z","level":"INFO","msg":"sender: started","stream_id":"gl8eoijs"}
+{"time":"2026-01-22T09:48:01.670465452Z","level":"INFO","msg":"Starting system monitor"}

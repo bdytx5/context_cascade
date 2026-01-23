@@ -1,0 +1,34 @@
+./output_dir/checkpoint-30/global_step30/bf16_zero_pp_rank_0_mp_rank_00_optim_states.pt
+./output_dir/checkpoint-30/model-00002-of-00002.safetensors
+./output_dir/checkpoint-30/model-00001-of-00002.safetensors
+./output_dir/checkpoint-30/llm1/model.safetensors
+
+# ignore common large files except JSON
+*.zip
+*.tar
+*.tar.gz
+*.7z
+*.rar
+*.iso
+*.bin
+*.exe
+*.dmg
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.h5
+*.npz
+*.npy
+*.parquet
+*.arrow
+*.feather
+*.db
+*.sqlite
+*.pdf
+. -type f -name *.json ! -path ./.git/* -exec du -h {} + | sort -h.json
+*.safetensors

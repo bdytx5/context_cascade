@@ -1,0 +1,7 @@
+{"time":"2026-01-22T09:43:00.311006288Z","level":"INFO","msg":"stream: starting","core version":"0.20.0","symlink path":"/home/cloud/c3/C3-Context-Cascade-Compression/C3-master/C3/train/wandb/run-20260122_094300-epw4e3bt/logs/debug-core.log"}
+{"time":"2026-01-22T09:43:00.591360503Z","level":"INFO","msg":"stream: created new stream","id":"epw4e3bt"}
+{"time":"2026-01-22T09:43:00.591387213Z","level":"INFO","msg":"stream: started","id":"epw4e3bt"}
+{"time":"2026-01-22T09:43:00.591401228Z","level":"INFO","msg":"writer: Do: started","stream_id":"epw4e3bt"}
+{"time":"2026-01-22T09:43:00.591408668Z","level":"INFO","msg":"handler: started","stream_id":"epw4e3bt"}
+{"time":"2026-01-22T09:43:00.591434129Z","level":"INFO","msg":"sender: started","stream_id":"epw4e3bt"}
+{"time":"2026-01-22T09:43:01.017702447Z","level":"INFO","msg":"Starting system monitor"}

@@ -1,0 +1,13 @@
+Loading checkpoint shards: 100%|███████████████████████████████████████| 2/2 [00:01<00:00,  1.18it/s]
+Loading llm1 from HF
+Successfully loaded and attached llm1.
+Expanding Q embedding: 32 -> 160 tokens
+Detected ZeRO-3 sharded weights, gathering parameters...
+Q embedding expanded successfully. New shape: torch.Size([160, 1536])
+Number of Mapping Trainable Parameters: 0.23 M
+Multi-task training with 2 datasets:
+  - /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers.json
+  - /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_summaries.json
+WARNING:root:Using 160 tokens for representing image
+WARNING:root:Formatting inputs into conversation type: mpt-fixed
+WARNING:root:Loading data...

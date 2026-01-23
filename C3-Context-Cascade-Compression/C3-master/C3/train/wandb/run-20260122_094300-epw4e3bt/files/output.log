@@ -1,0 +1,72 @@
+Loading checkpoint shards: 100%|███████████████████████████████████████| 2/2 [00:24<00:00, 12.39s/it]
+Loading llm1 from HF
+Successfully loaded and attached llm1.
+Expanding Q embedding: 32 -> 160 tokens
+Detected ZeRO-3 sharded weights, gathering parameters...
+Q embedding expanded successfully. New shape: torch.Size([160, 1536])
+Number of Mapping Trainable Parameters: 0.23 M
+Multi-task training with 2 datasets:
+  - /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers.json
+  - /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_summaries.json
+WARNING:root:Using 160 tokens for representing image
+WARNING:root:Formatting inputs into conversation type: mpt-fixed
+WARNING:root:Loading data...
+WARNING:root:Data from /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers.json provide 5000 conversations.
+WARNING:root:5000 conversations in total.
+Loaded /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers.json: 5000 samples
+WARNING:root:Using 160 tokens for representing image
+WARNING:root:Formatting inputs into conversation type: mpt-fixed
+WARNING:root:Loading data...
+WARNING:root:Data from /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_summaries.json provide 5000 conversations.
+WARNING:root:5000 conversations in total.
+Loaded /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_summaries.json: 5000 samples
+InterleavedMultiTaskDataset: 10000 samples
+  [arxiv_ai_papers] 5000 original -> 5000 upsampled
+  [arxiv_summaries] 5000 original -> 5000 upsampled
+WARNING:root:Using 160 tokens for representing image
+WARNING:root:Formatting inputs into conversation type: mpt-fixed
+WARNING:root:Loading data...
+WARNING:root:Data from /home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers_val.json provide 50 conversations.
+WARNING:root:50 conversations in total.
+Validation dataset: 10 samples
+Evaluation enabled: every 5000 steps on 10 samples
+/home/cloud/c3/C3-Context-Cascade-Compression/C3-master/C3/train/train_160.py:252: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `C3Trainer.__init__`. Use `processing_class` instead.
+  trainer = C3Trainer(
+WARNING:accelerate.accelerator:Gradient accumulation steps mismatch: GradientAccumulationPlugin has 1, DeepSpeed config has 16. Using DeepSpeed's value.
+/home/cloud/.local/lib/python3.10/site-packages/torch/utils/cpp_extension.py:2059: UserWarning: TORCH_CUDA_ARCH_LIST is not set, all archs for visible cards are included for compilation.
+If this is not desired, please set os.environ['TORCH_CUDA_ARCH_LIST'].
+  warnings.warn(
+Stage 3 initialize beginning
+MA 0.0 GB         Max_MA 1.74 GB         CA 0.0 GB         Max_CA 2 GB
+CPU Virtual Memory:  used = 24.35 GB, percent = 12.4%
+DeepSpeedZeRoOffload initialize [begin]
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 24.43 GB, percent = 12.4%
+Parameter Offload - Persistent parameters statistics: param_count = 323, numel = 388608
+DeepSpeedZeRoOffload initialize [end]
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 24.44 GB, percent = 12.4%
+Before creating fp16 partitions
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 24.44 GB, percent = 12.4%
+After creating fp16 partitions: 6
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 40.76 GB, percent = 20.7%
+Before creating fp32 partitions
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 40.76 GB, percent = 20.7%
+After creating fp32 partitions
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 57.98 GB, percent = 29.5%
+Before initializing optimizer states
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 57.98 GB, percent = 29.5%
+After initializing optimizer states
+MA 0.0 GB         Max_MA 0.0 GB         CA 0.0 GB         Max_CA 0 GB
+CPU Virtual Memory:  used = 78.37 GB, percent = 39.9%
+After initializing ZeRO optimizer
+MA 0.01 GB         Max_MA 1.17 GB         CA 1.18 GB         Max_CA 1 GB
+CPU Virtual Memory:  used = 94.69 GB, percent = 48.2%
+  0%|                                                                        | 0/625 [00:00<?, ?it/s]`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+  1%|▍                                                             | 5/625 [02:21<4:42:00, 27.29s/it]
+[2026-01-22 09:46:46,160] [WARNING] [stage3.py:2236:step] 1 pytorch allocator cache flushes since last step. this happens when there is high memory pressure and is detrimental to performance. if this is happening frequently consider adjusting settings to reduce memory consumption. If you are unable to make the cache flushes go away consider adding get_accelerator().empty_cache() calls in your training loop to ensure that all ranks flush their caches at the same time
