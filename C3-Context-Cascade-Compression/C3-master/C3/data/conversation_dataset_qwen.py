@@ -40,6 +40,14 @@ class ConversationDataset(BaseDataset):
         self.im_patch_token = 151859
         self.im_start_token = 151857
         self.im_end_token = 151858
+
+    def sanitize_text(self, text):
+        """Remove special token strings from raw text to prevent tokenization conflicts."""
+        # These strings in raw text would become special tokens and break the model
+        text = text.replace('<img>', '[img]')
+        text = text.replace('</img>', '[/img]')
+        text = text.replace('<imgpad>', '[imgpad]')
+        return text
     
     def processor(self, sources, flag_num_patches):
         sources_processor = []
@@ -189,6 +197,11 @@ class ConversationDataset(BaseDataset):
         data = copy.deepcopy(self.list_data_dict[i])
 
         if isinstance(data, dict):
+            # Sanitize text to remove special token strings that could break tokenization
+            for conv in data["conversations"]:
+                if conv["from"] in ("context", "gpt"):
+                    conv["value"] = self.sanitize_text(conv["value"])
+
             image_list =  []
             image_high_list = []
             flag_num_patches = 1

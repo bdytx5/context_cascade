@@ -245,8 +245,8 @@ def train():
     if val_dataset is not None:
         training_args.evaluation_strategy = "steps"
         training_args.eval_steps = training_args.save_steps  # Eval at same frequency as save
+        training_args.save_strategy = "no"  # Disable regular checkpoint saving - only save best model via callback
         training_args.load_best_model_at_end = False  # We handle this manually
-        training_args.save_total_limit = 2  # Keep fewer checkpoints to save disk
         data_module['eval_dataset'] = val_dataset
         print(f"Evaluation enabled: every {training_args.eval_steps} steps on {len(val_dataset)} samples")
 

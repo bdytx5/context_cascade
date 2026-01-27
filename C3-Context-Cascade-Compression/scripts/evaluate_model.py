@@ -13,7 +13,7 @@ from transformers import AutoModel, AutoTokenizer
 from litellm import completion
 
 import weave
-from weave.flow.eval_imperative import EvaluationLogger
+from weave import EvaluationLogger
 
 # Optional imports - graceful fallback
 try:
@@ -208,9 +208,9 @@ def main():
                         help="Max context characters to use")
     parser.add_argument("--weave_project", type=str, default="c3-evaluation",
                         help="Weave project name")
-    parser.add_argument("--use_llm", action="store_true",
+    parser.add_argument("--use_llm", action="store_true", default=True,
                         help="Use LLM scorer via LiteLLM (gpt-5)")
-    parser.add_argument("--use_bert", action="store_true",
+    parser.add_argument("--use_bert", action="store_true", default=True,
                         help="Use BERTScore (slow)")
     args = parser.parse_args()
 
