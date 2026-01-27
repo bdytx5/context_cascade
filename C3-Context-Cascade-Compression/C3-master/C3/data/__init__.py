@@ -45,11 +45,18 @@ class InterleavedMultiTaskDataset(torch.utils.data.Dataset):
 
     Upsamples smaller datasets to match the largest, then interleaves.
     This ensures roughly equal representation of each task per epoch.
+
+    Uses a deterministic seed to ensure reproducible ordering across runs,
+    which is critical for proper checkpoint resumption.
     """
 
-    def __init__(self, datasets, names=None):
+    def __init__(self, datasets, names=None, seed=42):
         self.datasets = datasets
         self.names = names or [f"task_{i}" for i in range(len(datasets))]
+        self.seed = seed
+
+        # Use deterministic random state for reproducibility
+        rng = random.Random(seed)
 
         # Find max size and upsample indices
         sizes = [len(ds) for ds in datasets]
@@ -67,16 +74,16 @@ class InterleavedMultiTaskDataset(torch.utils.data.Dataset):
                 # Upsample by repeating
                 repeats = max_size // ds_size
                 remainder = max_size % ds_size
-                indices = indices * repeats + random.sample(indices, remainder)
-            random.shuffle(indices)
+                indices = indices * repeats + rng.sample(indices, remainder)
+            rng.shuffle(indices)
 
             for sample_idx in indices:
                 self.index_map.append((ds_idx, sample_idx))
 
         # Shuffle the interleaved indices
-        random.shuffle(self.index_map)
+        rng.shuffle(self.index_map)
 
-        print(f"InterleavedMultiTaskDataset: {len(self.index_map)} samples")
+        print(f"InterleavedMultiTaskDataset: {len(self.index_map)} samples (seed={seed})")
         for i, (ds, name) in enumerate(zip(datasets, self.names)):
             print(f"  [{name}] {len(ds)} original -> {max_size} upsampled")
 
@@ -88,7 +95,7 @@ class InterleavedMultiTaskDataset(torch.utils.data.Dataset):
         return self.datasets[ds_idx][sample_idx]
 
 
-def make_supervised_data_module(interleave, tokenizer, data_args):
+def make_supervised_data_module(interleave, tokenizer, data_args, seed=42):
 
     if data_args.conversation_version == 'mpt':
         from C3.data.conversation_dataset_qwen import ConversationDataset
@@ -120,7 +127,7 @@ def make_supervised_data_module(interleave, tokenizer, data_args):
             print(f"Loaded {path}: {len(ds)} samples")
 
         # Create interleaved dataset (handles balancing internally)
-        train_dataset = InterleavedMultiTaskDataset(datasets, names)
+        train_dataset = InterleavedMultiTaskDataset(datasets, names, seed=seed)
 
         data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
         return dict(

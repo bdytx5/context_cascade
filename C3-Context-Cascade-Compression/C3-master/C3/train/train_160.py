@@ -234,7 +234,8 @@ def train():
     data_module = make_supervised_data_module(
         interleave=training_args.interleave,
         tokenizer=tokenizer,
-        data_args=data_args
+        data_args=data_args,
+        seed=training_args.seed
     )
 
     # Create validation dataset
