@@ -39,7 +39,7 @@ TRAIN_DATA_PATHS = [
 
 # Validation config
 VAL_DATA_PATH = "/home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers_val.json"
-NUM_VAL_SAMPLES = 10  # Evaluate on 10 papers
+NUM_VAL_SAMPLES = 0  # Set to 0 to disable eval, or 10+ to enable
 
 # Wandb config
 WANDB_PROJECT = "c3-context-compression"
@@ -48,6 +48,8 @@ WANDB_ENTITY = 'byyoung3'  # Set to your wandb username/team if needed
 
 def create_val_dataset(tokenizer, data_args, num_samples=NUM_VAL_SAMPLES):
     """Create a small validation dataset from the validation JSON file"""
+    if num_samples <= 0:
+        return None
     if not os.path.exists(VAL_DATA_PATH):
         print(f"Warning: Validation file not found at {VAL_DATA_PATH}")
         return None
@@ -109,8 +111,8 @@ class BestModelCallback(TrainerCallback):
             if os.path.exists(best_dir):
                 shutil.rmtree(best_dir)
 
-            # Save new best model
-            self.trainer._safe_save(output_dir=best_dir)
+            # Save new best model (use save_model which handles ZeRO-3 properly)
+            self.trainer.save_model(output_dir=best_dir)
 
             # Save best loss for resume
             with open(self.best_loss_file, 'w') as f:
@@ -273,7 +275,9 @@ def train():
     else:
         trainer.train()
     trainer.save_state()
-    trainer._safe_save(output_dir=training_args.output_dir)
+    last_model_dir = os.path.join(training_args.output_dir, "last_model")
+    trainer.save_model(output_dir=last_model_dir)
+    print(f"Last model saved to: {last_model_dir}")
 
     # Print final best eval loss
     if val_dataset is not None:
