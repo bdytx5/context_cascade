@@ -199,13 +199,16 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate C3 model on validation set")
     parser.add_argument("--model_path", type=str, required=True,
                         help="Path to trained model checkpoint")
-    parser.add_argument("--val_path", type=str,
-                        default="/home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_summaries_val.json",
-                        help="Path to validation dataset")
+    parser.add_argument("--val_path", type=str, default=None,
+                        help="Path to validation dataset (auto-selected based on task if not specified)")
+    parser.add_argument("--task", type=str, default="summarize", choices=["summarize", "repeat"],
+                        help="Task to evaluate: 'summarize' or 'repeat'")
     parser.add_argument("--max_samples", type=int, default=None,
                         help="Max samples to evaluate (default: all)")
     parser.add_argument("--max_context_chars", type=int, default=50000,
                         help="Max context characters to use")
+    parser.add_argument("--pct", type=int, default=100,
+                        help="Percentage of original context to use (1-100)")
     parser.add_argument("--weave_project", type=str, default="c3-evaluation",
                         help="Weave project name")
     parser.add_argument("--use_llm", action="store_true", default=True,
@@ -213,6 +216,13 @@ def main():
     parser.add_argument("--use_bert", action="store_true", default=True,
                         help="Use BERTScore (slow)")
     args = parser.parse_args()
+
+    # Auto-select validation path based on task if not specified
+    if args.val_path is None:
+        if args.task == "repeat":
+            args.val_path = "/home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_ai_papers_val.json"
+        else:
+            args.val_path = "/home/cloud/c3/C3-Context-Cascade-Compression/dataset/arxiv_summaries_val.json"
 
     # Initialize weave
     weave.init(args.weave_project)
@@ -227,18 +237,31 @@ def main():
 
     # Create evaluation logger
     model_name = args.model_path.split("/")[-1]
-    ev = EvaluationLogger(name="c3-summarization-eval", model=model_name)
+    ev = EvaluationLogger(name=f"c3-{args.task}-eval", model=model_name)
 
     print(f"\n{'='*60}")
     print(f"Starting evaluation: {len(samples)} samples")
+    print(f"Task: {args.task}")
+    print(f"Context percentage: {args.pct}%")
     print(f"{'='*60}\n")
 
     for i, sample in enumerate(samples):
         context = sample["context"][:args.max_context_chars]
-        prompt = sample["prompt"]
-        gt = sample["ground_truth"]
 
-        print(f"[{i+1}/{len(samples)}] Running inference...")
+        # Apply percentage truncation if specified
+        if args.pct < 100:
+            truncate_len = int(len(context) * args.pct / 100)
+            context = context[:truncate_len]
+
+        # Set prompt and ground truth based on task
+        if args.task == "repeat":
+            prompt = "Repeat the text: "
+            gt = context  # For repeat task, ground truth is the input context
+        else:
+            prompt = sample["prompt"]
+            gt = sample["ground_truth"]
+
+        print(f"[{i+1}/{len(samples)}] Running inference (context: {len(context)} chars, {args.pct}%)...")
 
         # Generate output
         output = model.generate(context, prompt)
@@ -248,15 +271,19 @@ def main():
 
         # Always run these (fast)
         scores.update(rouge_scorer_fn(gt, output))
-        scores.update(compression_scorer(gt, output))
         scores.update(coverage_scorer(gt, output))
 
-        # Optional scorers
-        if args.use_bert and BERT_SCORE_AVAILABLE:
-            scores.update(bert_scorer(gt, output))
-
-        if args.use_llm:
-            scores.update(llm_scorer(gt, output))
+        # Task-specific scorers
+        if args.task == "repeat":
+            # For repeat task, just use basic metrics (ROUGE + coverage)
+            pass
+        else:
+            # For summarization, add more scorers
+            scores.update(compression_scorer(gt, output))
+            if args.use_bert and BERT_SCORE_AVAILABLE:
+                scores.update(bert_scorer(gt, output))
+            if args.use_llm:
+                scores.update(llm_scorer(gt, output))
 
         print(f"  ROUGE-L: {scores.get('rougeL_f', 0):.3f}, Coverage: {scores.get('coverage_score', 0):.3f}")
 
@@ -265,6 +292,7 @@ def main():
             inputs={
                 "context": context,
                 "prompt": prompt,
+                "grount_truth": gt
             },
             output=output,
             scores=scores,
